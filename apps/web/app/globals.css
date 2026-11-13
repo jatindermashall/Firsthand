@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --color-ink: #10292B; --color-ink-2: #22393A; --color-muted: #4A5B5A; --color-faint: #6B7774;
+  --color-brand: #0E6B63; --color-brand-dark: #0A4F49; --color-brand-soft: #E3F0EC;
+  --color-cream: #F7F4EE; --color-paper: #FFFDF9; --color-sand: #F0EBE1;
+  --color-line: #E6E0D4; --color-line-soft: #EFEAE0;
+  --color-amber-soft: #FBF1DF; --color-amber-line: #EAD3A8; --color-amber-ink: #5C3A05;
+  --color-danger: #8A2A1E; --color-danger-soft: #FBE7E4;
+}
+@layer base {
+  body { @apply bg-cream text-ink font-sans text-base leading-relaxed antialiased; }
+  h1, h2, h3 { text-wrap: balance; }
+  :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+}
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8; }
+  .h-display { @apply font-display font-bold tracking-tight; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 min-h-11 font-semibold text-[15px] transition cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply bg-brand text-white hover:bg-brand-dark; }
+  .btn-dark { @apply bg-ink text-white hover:bg-ink-2; }
+  .btn-outline { @apply border border-line bg-white text-ink hover:border-ink; }
+  .btn-ghost { @apply text-ink hover:bg-sand; }
+  .btn-danger { @apply bg-danger-soft text-danger hover:bg-[#F6D6D1]; }
+  .btn-sm { @apply min-h-9 px-3.5 text-[13.5px] rounded-lg; }
+  .card { @apply bg-white border border-line rounded-2xl; }
+  .chip { @apply inline-flex items-center rounded-full border border-line bg-paper px-3.5 min-h-10 text-sm cursor-pointer transition hover:border-ink; }
+  .chip-on { @apply bg-ink text-white border-ink; }
+  .badge { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap; }
+  .pill { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap; }
+  .eyebrow { @apply text-[13px] font-bold uppercase tracking-[0.08em] text-brand; }
+  .tag { @apply rounded-md bg-white px-2 py-1 text-xs font-medium text-muted; }
+  .input { @apply w-full rounded-xl border border-line bg-white px-3.5 min-h-11 text-[15px] text-ink outline-none focus:border-brand placeholder:text-faint; }
+  .label { @apply block text-[13px] font-semibold text-muted mb-1.5; }
+  .th { @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-faint; }
+  .td { @apply px-4 py-3.5 align-top; }
+  .notice { @apply rounded-xl px-4 py-3 text-sm; }
+}
+.ph { background: repeating-linear-gradient(135deg, #ECE6DA 0 12px, #F2EDE4 12px 24px); }
+.ph-b { background: repeating-linear-gradient(135deg, #E4EEE9 0 12px, #EDF4F0 12px 24px); }
+.ph-c { background: repeating-linear-gradient(135deg, #F0E6E0 0 12px, #F5EEE9 12px 24px); }

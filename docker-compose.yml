@@ -1,0 +1,40 @@
+# Local or self-hosted run from a checkout: `docker compose up --build`
+# Production on the Hostinger VPS uses deploy/compose.vps.yaml (builds straight from GitHub main).
+name: firsthand
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: firsthand
+      MYSQL_USER: firsthand
+      MYSQL_PASSWORD: ${DB_PASSWORD:-firsthand-local}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-firsthand-root-local}
+    volumes: [mysql:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+  api:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    restart: unless-stopped
+    depends_on: { mysql: { condition: service_healthy } }
+    environment:
+      DATABASE_URL: mysql://firsthand:${DB_PASSWORD:-firsthand-local}@mysql:3306/firsthand
+      ADMIN_ACCESS_KEY: ${ADMIN_ACCESS_KEY:-change-me-local-admin-key}
+      COOKIE_SECURE: "false"
+      UPLOAD_DIR: /data/uploads
+      SEED_DEMO: "true"
+    volumes: [uploads:/data/uploads]
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      API_INTERNAL_URL: http://api:4000
+    ports: ["3000:3000"]
+volumes:
+  mysql: {}
+  uploads: {}

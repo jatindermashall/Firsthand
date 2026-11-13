@@ -1,0 +1,5 @@
+# Add to the shared Caddy proxy on the VPS (/srv/proxy/sites/), then reload Caddy.
+firsthand.decyb.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:13015
+}

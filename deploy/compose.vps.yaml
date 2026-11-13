@@ -1,0 +1,52 @@
+# Production stack for firsthand.decyb.com on the Hostinger VPS (Docker Manager project "firsthand").
+# Images are built straight from the GitHub main branch, so main is always what's deployed.
+# Secrets come from the project's environment in Docker Manager — never from this repo.
+name: firsthand
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: firsthand
+      MYSQL_USER: firsthand
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD is required}
+    volumes: [mysql:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    mem_limit: 768m
+  api:
+    build:
+      context: https://github.com/jatindermashall/firsthand.git#main
+      dockerfile: apps/api/Dockerfile
+    image: firsthand-api:main
+    restart: unless-stopped
+    depends_on: { mysql: { condition: service_healthy } }
+    environment:
+      DATABASE_URL: mysql://firsthand:${DB_PASSWORD}@mysql:3306/firsthand
+      ADMIN_ACCESS_KEY: ${ADMIN_ACCESS_KEY:?ADMIN_ACCESS_KEY is required}
+      COOKIE_SECURE: "true"
+      UPLOAD_DIR: /data/uploads
+      SEED_DEMO: ${SEED_DEMO:-true}
+      SMTP_URL: ${SMTP_URL:-}
+      MAIL_FROM: ${MAIL_FROM:-Firsthand <no-reply@firsthand.decyb.com>}
+    volumes: [uploads:/data/uploads]
+    mem_limit: 512m
+  web:
+    build:
+      context: https://github.com/jatindermashall/firsthand.git#main
+      dockerfile: apps/web/Dockerfile
+    image: firsthand-web:main
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      API_INTERNAL_URL: http://api:4000
+    ports: ["127.0.0.1:13015:3000"]
+    mem_limit: 512m
+volumes:
+  mysql: {}
+  uploads: {}
