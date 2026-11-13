@@ -24,6 +24,7 @@ services:
       context: https://github.com/jatindermashall/firsthand.git#main
       dockerfile: apps/api/Dockerfile
     image: firsthand-api:main
+    pull_policy: build
     restart: unless-stopped
     depends_on: { mysql: { condition: service_healthy } }
     environment:
@@ -41,6 +42,7 @@ services:
       context: https://github.com/jatindermashall/firsthand.git#main
       dockerfile: apps/web/Dockerfile
     image: firsthand-web:main
+    pull_policy: build
     restart: unless-stopped
     depends_on: [api]
     environment:
